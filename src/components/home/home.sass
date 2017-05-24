@@ -1,0 +1,60 @@
+.content h1
+  text-align: center
+
+.player
+  float: left
+  margin: 10px
+
+.field-container
+  float: left
+  margin-right: 5px
+
+.next-container
+  float: left
+
+.next-container:after
+  content: ""
+  clear: both
+  display: block
+
+.hold
+  margin-bottom: 5px
+
+.field-row
+  display: block
+
+.field-row:after
+  content: ""
+  clear: both
+  display: block
+
+.field-block
+  display: block
+  border: 1px solid #555
+  float: left
+  width: 20px
+  height: 20px
+
+.next-row
+  display: block
+
+.next-row:after
+  content: ""
+  clear: both
+  display: block
+
+.next-block
+  display: block
+  float: left
+  width: 16px
+  height: 16px
+
+@import "./colors"
+
+@each $name, $color in $colors
+  .block-#{$name}
+    background-color: $color
+  .block-#{$name}-active
+    background-color: lighten($color, 20%)
+  .block-#{$name}-ghost
+    background-color: darken($color, 20%)

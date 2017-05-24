@@ -1,9 +1,33 @@
 <div class="container">
-    <div class="row">
-        <div class="content col-md-4">
-            <h1><strong>Thank you for using <span class="text-primary package">{{package}}</span></strong></h1>
-            <p>This project is running in <strong class="mode">{{mode}} mode</strong></p>
-            <p>Make sure to follow the project on <a v-bind:href="repo">GitHub</a> to stay up to date with the latest releases, or contribute to the broject by opening an issue or making a pull-request!</p>
+  <div id="players">
+    <div class="player" v-for="player in data.players">
+      <div class="field-container">
+        <div class="field">
+          <div class="field-row" v-for="row in player.field">
+            <div class="field-block" v-bind:class="['block-' + block.blockClass]" v-for="block in row"></div>
+          </div>
         </div>
+        <div class="info">
+          <div>Player {{player.number}}</div>
+          <div>Alive: {{player.alive}}</div>
+          <div>Active: {{player.active}}</div>
+          <div>Mino: {{player.mino}}</div>
+          <div>Garbage: {{player.garbage}}</div>
+          <div>Target: {{player.target}}</div>
+        </div>
+      </div>
+      <div class="next-container">
+        <div class="hold">
+          <div class="next-row" v-for="row in player.hold">
+            <div class="next-block" v-bind:class="['block-' + block.blockClass]" v-for="block in row"></div>
+          </div>
+        </div>
+        <div class="next">
+          <div class="next-row" v-for="row in player.next">
+            <div class="next-block" v-bind:class="['block-' + block.blockClass]" v-for="block in row"></div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </div>
