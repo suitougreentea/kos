@@ -100,6 +100,7 @@ export default class Player {
       this.newMino()
     }
     this.lastStartMino = this.currentMino
+    this.lastTarget = this.target
   }
 
   newMino() {
