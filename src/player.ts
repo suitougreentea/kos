@@ -74,6 +74,8 @@ export default class Player {
   public active = false
   public target: number
 
+  public lastTarget: number
+
   constructor(readonly game: Game, seed: number, config) {
     this.turnMinoNumber = config.turnMinoNumber
     this.randomizer = new MinoRandomizerBag(new Set([0, 1, 2, 3, 4, 5, 6]), seed)
@@ -169,6 +171,7 @@ export default class Player {
 
   lockMino() {
     if(this.currentMino == null) return
+    // Lock
     if(this.minoY != this.ghostY) this.lastRotated = false
     this.minoY = this.ghostY
     this.currentMino.getRotatedBlocks(this.minoR).forEach(e => {
@@ -177,6 +180,7 @@ export default class Player {
       this.field.set(new Pos(this.minoX + pos.x, this.minoY + pos.y), block)
     })
 
+    // Spin
     let spin = false
     let spinMini = false
     if(this.lastRotated) {
@@ -216,6 +220,7 @@ export default class Player {
       }
     }
 
+    // Line clear
     const fillStart = this.invisibleGarbage.reduce((a, b) => a + b, 0)
     const lineFilled = []
     for(let iy=fillStart; iy<this.height; iy++) {
@@ -246,7 +251,7 @@ export default class Player {
       } else i++
     }
 
-
+    // onLineErase
     if(lines > 0) {
       const allClear = this.field.map.size == 0
       const backToBack = this.backToBackFlag && (lines == 4 || spin)
@@ -254,6 +259,7 @@ export default class Player {
       this.backToBackFlag = lines == 4 || spin
     }
 
+    // Garbage
     if(lines == 0) {
       while(this.garbage.length > 0) {
         const garbageLines = this.garbage.shift()
@@ -316,6 +322,7 @@ export default class Player {
     this.lastPlacedMinoNumber = this.placedMinoNumber
     this.lastCombo = this.combo
     this.lastBackToBackFlag = this.backToBackFlag
+    this.lastTarget = this.target
     if(this.turnMinoNumber == this.placedMinoNumber) {
       this.next.push(this.generator.newMino())
       this.active = false
@@ -332,6 +339,7 @@ export default class Player {
     this.combo = this.lastCombo
     this.backToBackFlag = this.lastBackToBackFlag
     this.invisibleGarbage = []
+    this.target = this.lastTarget
     this.commit()
     this.resetMinoState()
   }
