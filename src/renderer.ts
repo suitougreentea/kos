@@ -91,7 +91,8 @@ export default class Renderer {
       })
     }
 
-    const garbage = player.garbage.reduce((a, b) => a + b, 0) + ": " + player.garbage.join(", ")
+    const garbage = "[" + player.garbage.reduce((a, b) => a + b, 0) + "] " + player.garbage.join(", ")
+    const combo = Math.max(player.combo, 0)
 
     return {
       number: i + 1,
@@ -101,6 +102,8 @@ export default class Renderer {
       next: next,
       hold: hold,
       garbage: garbage,
+      combo: combo,
+      backToBack: player.backToBackFlag,
       target: player.target == null ? "-" : player.target + 1,
       mino: player.placedMinoNumber + "/" + player.turnMinoNumber
     }

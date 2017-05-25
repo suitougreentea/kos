@@ -120,6 +120,7 @@ export default class Game {
     this.players[this.currentPlayer].alive = false
     this.alivePlayers.splice(this.alivePlayers.indexOf(this.currentPlayer), 1)
     if(this.alivePlayers.length == 1) {
+      this.players[this.alivePlayers[0]].viewHeight = this.players[this.alivePlayers[0]].height
       console.log("Player " + (this.alivePlayers[0] + 1) + ": Win")
     }
     this.nextPlayer()
