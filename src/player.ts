@@ -8,6 +8,7 @@ import Block from "./block"
 import Pos from "./pos"
 import GameUtil from "./game-util"
 import Game from "./game"
+import { GarbageMode } from "./game"
 
 const spinDataHigh = [
   [],
@@ -76,8 +77,11 @@ export default class Player {
 
   public lastTarget: number
 
+  public garbageMode: GarbageMode
+
   constructor(readonly game: Game, seed: number, config) {
     this.turnMinoNumber = config.turnMinoNumber
+    this.garbageMode = config.garbageMode
     this.randomizer = new MinoRandomizerBag(new Set([0, 1, 2, 3, 4, 5, 6]), seed)
     this.coloring = new MinoColoringStandard()
     this.generator = new MinoGeneratorStandard(this.randomizer, this.coloring)
@@ -261,23 +265,8 @@ export default class Player {
 
     // Garbage
     if(lines == 0) {
-      while(this.garbage.length > 0) {
-        const garbageLines = this.garbage.shift()
-        this.invisibleGarbage.push(garbageLines)
-        for(let iy=this.height-1; iy>=garbageLines; iy--) {
-          for(let ix=0; ix<this.width; ix++) {
-            if(this.field.contains(new Pos(ix, iy - garbageLines))) {
-              this.field.set(new Pos(ix, iy), this.field.get(new Pos(ix, iy - garbageLines)))
-              this.field.remove(new Pos(ix, iy - garbageLines))
-            }
-          }
-        }
-        for(let iy=garbageLines-1; iy>=0; iy--) {
-          for(let ix=0; ix<this.width; ix++) {
-            this.field.set(new Pos(ix, iy), Block.Gray)
-          }
-        }
-      }
+      if(this.garbageMode == GarbageMode.ONE_ATTACK) if(this.garbage.length > 0) this.shiftGarbage()
+      if(this.garbageMode == GarbageMode.ALL) while(this.garbage.length > 0) this.shiftGarbage()
     }
 
     this.placedMinoNumber ++
@@ -285,6 +274,24 @@ export default class Player {
       this.newMino()
     } else {
       this.currentMino = null
+    }
+  }
+
+  shiftGarbage() {
+    const garbageLines = this.garbage.shift()
+    this.invisibleGarbage.push(garbageLines)
+    for(let iy=this.height-1; iy>=garbageLines; iy--) {
+      for(let ix=0; ix<this.width; ix++) {
+        if(this.field.contains(new Pos(ix, iy - garbageLines))) {
+          this.field.set(new Pos(ix, iy), this.field.get(new Pos(ix, iy - garbageLines)))
+          this.field.remove(new Pos(ix, iy - garbageLines))
+        }
+      }
+    }
+    for(let iy=garbageLines-1; iy>=0; iy--) {
+      for(let ix=0; ix<this.width; ix++) {
+        this.field.set(new Pos(ix, iy), Block.Gray)
+      }
     }
   }
 

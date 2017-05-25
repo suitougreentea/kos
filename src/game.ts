@@ -1,6 +1,11 @@
 import Player from "./player"
 import { minoName } from "./mino"
 
+export enum GarbageMode {
+  ALL,
+  ONE_ATTACK
+}
+
 const linesName = {
   1: "Single",
   2: "Double",
@@ -27,8 +32,8 @@ const spinMiniAttack = {
 export default class Game {
   readonly seed = Math.floor(Math.random() * 1000000000)
   readonly players = [
-    new Player(this, this.seed, { turnMinoNumber: 7 }),
-    new Player(this, this.seed, { turnMinoNumber: 7 }),
+    new Player(this, this.seed, this.getDefaultPlayerSetting()),
+    new Player(this, this.seed, this.getDefaultPlayerSetting()),
     //new Player(this, this.seed),
     //new Player(this, this.seed),
   ]
@@ -40,6 +45,13 @@ export default class Game {
       this.alivePlayers.push(i)
     })
     this.startPlayer()
+  }
+
+  getDefaultPlayerSetting() {
+    return {
+      turnMinoNumber: 7,
+      garbageMode: GarbageMode.ALL
+    }
   }
 
   leftKeyPressed() {
