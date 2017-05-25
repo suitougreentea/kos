@@ -49,8 +49,11 @@ export default class Game {
 
   getDefaultPlayerSetting() {
     return {
+      width: 10,
+      height: 25,
+      viewHeight: 20,
       turnMinoNumber: 7,
-      garbageMode: GarbageMode.ALL
+      garbageMode: GarbageMode.ALL,
     }
   }
 

@@ -33,10 +33,10 @@ const spinDataLow = [
 ]
 
 export default class Player {
-  public field = new Field(10, 25)
-  readonly width = this.field.width
-  readonly height = this.field.height
-  public viewHeight = 20
+  public field: Field
+  readonly width: number
+  readonly height: number
+  public viewHeight: number
 
   readonly randomizer: MinoRandomizer
   readonly coloring: MinoColoring
@@ -56,7 +56,7 @@ export default class Player {
   public invisibleGarbage: Array<number> = []
 
   public lastStartMino: Mino
-  public lastField: Field = new Field(10, 25)
+  public lastField: Field
   public lastNext: Array<Mino> = []
   public lastHold: Mino
   public lastPlacedMinoNumber: number = 0
@@ -80,8 +80,14 @@ export default class Player {
   public garbageMode: GarbageMode
 
   constructor(readonly game: Game, seed: number, config) {
+    this.width = config.width
+    this.height = config.height
+    this.viewHeight = config.viewHeight
+    this.field = new Field(this.width, this.height)
+    this.lastField = new Field(this.width, this.height)
     this.turnMinoNumber = config.turnMinoNumber
     this.garbageMode = config.garbageMode
+
     this.randomizer = new MinoRandomizerBag(new Set([0, 1, 2, 3, 4, 5, 6]), seed)
     this.coloring = new MinoColoringStandard()
     this.generator = new MinoGeneratorStandard(this.randomizer, this.coloring)
