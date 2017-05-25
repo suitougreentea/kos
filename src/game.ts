@@ -19,6 +19,10 @@ const spinAttack = {
   2: 4,
   3: 6
 }
+const spinMiniAttack = {
+  1: 0,
+  2: 3
+}
 
 export default class Game {
   readonly seed = Math.floor(Math.random() * 1000000000)
@@ -77,8 +81,8 @@ export default class Game {
     this.players.forEach(player => player.saveGarbage())
   }
 
-  onLineErase(minoId: number, lines: number, spin: boolean, spinMini: boolean, backToBack: boolean, combo: number) {
-    let attack = this.calculateGarbage(minoId, lines, spin, spinMini, backToBack, combo)
+  onLineErase(minoId: number, lines: number, spin: boolean, spinMini: boolean, backToBack: boolean, combo: number, allClear: boolean) {
+    let attack = this.calculateAttack(minoId, lines, spin, spinMini, backToBack, combo, allClear)
     if(attack > 0) {
       let actualAttack = 0
       const garbage = this.players[this.currentPlayer].garbage
@@ -103,6 +107,7 @@ export default class Game {
     if(spinMini) c.push("Mini")
     c.push(linesName[lines])
     if(combo >= 1) c.push(`${combo} Combo`)
+    if(allClear) c.push("All Clear")
     console.log("Player" + (this.currentPlayer + 1) + ": " + c.join(" "))
   }
 
@@ -120,17 +125,18 @@ export default class Game {
     this.nextPlayer()
   }
 
-  calculateGarbage(minoId: number, lines: number, spin: boolean, spinMini: boolean, backToBack: boolean, combo: number): number {
+  calculateAttack(minoId: number, lines: number, spin: boolean, spinMini: boolean, backToBack: boolean, combo: number, allClear: boolean): number {
     let result = 0
-    if(spin) result += spinAttack[lines]
+    if(spin && spinMini) result += spinMiniAttack[lines]
+    else if(spin) result += spinAttack[lines]
     else result += attack[lines]
-    if(spinMini) result --
     if(backToBack) result ++
-    if(combo) result += this.calculateComboGarbage(combo)
+    if(combo) result += this.calculateComboAttack(combo)
+    if(allClear) result += 6
     return result
   }
 
-  calculateComboGarbage(combo: number): number {
+  calculateComboAttack(combo: number): number {
     return Math.min(Math.floor(combo / 2), 5)
   }
 

@@ -241,9 +241,12 @@ export default class Player {
         }
       } else i++
     }
+
+
     if(lines > 0) {
+      const allClear = this.field.map.size == 0
       const backToBack = this.backToBackFlag && (lines == 4 || spin)
-      this.game.onLineErase(this.currentMino.minoId, lines, spin, spinMini, backToBack, this.combo)
+      this.game.onLineErase(this.currentMino.minoId, lines, spin, spinMini, backToBack, this.combo, allClear)
       this.backToBackFlag = lines == 4 || spin
     }
 
