@@ -42,7 +42,7 @@ export default class Player {
   readonly generator: MinoGenerator
   readonly rotationSystem: RotationSystem
 
-  readonly turnMinoNumber = 7
+  readonly turnMinoNumber: number
   public currentMino: Mino
   public minoX: number = 0
   public minoY: number = 0
@@ -67,11 +67,15 @@ export default class Player {
   public combo = -1
   public backToBackFlag = false
 
+  public lastCombo = -1
+  public lastBackToBackFlag = false
+
   public alive = true
   public active = false
   public target: number
 
-  constructor(readonly game: Game, seed: number) {
+  constructor(readonly game: Game, seed: number, config) {
+    this.turnMinoNumber = config.turnMinoNumber
     this.randomizer = new MinoRandomizerBag(new Set([0, 1, 2, 3, 4, 5, 6]), seed)
     this.coloring = new MinoColoringStandard()
     this.generator = new MinoGeneratorStandard(this.randomizer, this.coloring)
@@ -310,6 +314,8 @@ export default class Player {
     this.next.forEach(e => this.lastNext.push(e))
     this.lastHold = this.hold
     this.lastPlacedMinoNumber = this.placedMinoNumber
+    this.lastCombo = this.combo
+    this.lastBackToBackFlag = this.backToBackFlag
     if(this.turnMinoNumber == this.placedMinoNumber) {
       this.next.push(this.generator.newMino())
       this.active = false
@@ -323,6 +329,8 @@ export default class Player {
     this.next = this.lastNext
     this.hold = this.lastHold
     this.placedMinoNumber = this.lastPlacedMinoNumber
+    this.combo = this.lastCombo
+    this.backToBackFlag = this.lastBackToBackFlag
     this.invisibleGarbage = []
     this.commit()
     this.resetMinoState()

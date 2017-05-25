@@ -27,10 +27,10 @@ const spinMiniAttack = {
 export default class Game {
   readonly seed = Math.floor(Math.random() * 1000000000)
   readonly players = [
-    new Player(this, this.seed),
-    new Player(this, this.seed),
-    new Player(this, this.seed),
-    new Player(this, this.seed),
+    new Player(this, this.seed, { turnMinoNumber: 7 }),
+    new Player(this, this.seed, { turnMinoNumber: 7 }),
+    //new Player(this, this.seed),
+    //new Player(this, this.seed),
   ]
   readonly alivePlayers: Array<number> = []
   public currentPlayer = 0
