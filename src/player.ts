@@ -77,9 +77,9 @@ export default class Player {
     this.generator = new MinoGeneratorStandard(this.randomizer, this.coloring)
     this.rotationSystem = new RotationSystemStandard()
     this.currentMino = this.generator.newMino()
+    while(this.next.length < this.turnMinoNumber) this.next.push(this.generator.newMino())
     this.resetMinoState()
     this.commit()
-    this.next.push(this.generator.newMino())
   }
 
   startTurn() {
