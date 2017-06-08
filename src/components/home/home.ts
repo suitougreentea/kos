@@ -14,71 +14,21 @@ export class HomeComponent extends Vue {
 
   mounted() {
     window.addEventListener("keydown", this.onKeyDown)
+    window.addEventListener("keyup", this.onKeyUp)
+    window.setInterval(this.update, 1000 / 30)
   }
 
-  onKeyDown(e) {
-    switch(e.code) {
-      case "ArrowLeft":
-        e.preventDefault()
-        this.game.leftKeyPressed()
-        this.refreshRenderer()
-        break
-      case "ArrowRight":
-        e.preventDefault()
-        this.game.rightKeyPressed()
-        this.refreshRenderer()
-        break
-      case "ArrowDown":
-        e.preventDefault()
-        this.game.downKeyPressed()
-        this.refreshRenderer()
-        break
-      case "ArrowUp":
-        e.preventDefault()
-        this.game.lockKeyPressed()
-        this.refreshRenderer()
-        break
-      case "Space":
-        e.preventDefault()
-        this.game.quickKeyPressed()
-        this.refreshRenderer()
-        break
-      case "KeyZ":
-        e.preventDefault()
-        this.game.ccwKeyPressed()
-        this.refreshRenderer()
-        break
-      case "KeyX":
-        e.preventDefault()
-        this.game.cwKeyPressed()
-        this.refreshRenderer()
-        break
-      case "KeyS":
-        e.preventDefault()
-        this.game.rotate180KeyPressed()
-        this.refreshRenderer()
-        break
-      case "KeyC":
-        e.preventDefault()
-        this.game.holdKeyPressed()
-        this.refreshRenderer()
-        break
-      case "KeyQ":
-        e.preventDefault()
-        this.game.resetKeyPressed()
-        this.refreshRenderer()
-        break
-      case "KeyR":
-        e.preventDefault()
-        this.game.revertKeyPressed()
-        this.refreshRenderer()
-        break
-      case "Enter":
-        e.preventDefault()
-        this.game.commitKeyPressed()
-        this.refreshRenderer()
-        break
-    }
+  update() {
+    if(this.game.update()) this.refreshRenderer()
+  }
+
+  onKeyDown(e: KeyboardEvent) {
+    e.preventDefault()
+    this.game.onKeyDown(e)
+  }
+
+  onKeyUp(e) {
+    this.game.onKeyUp(e)
   }
 
   refreshRenderer() {

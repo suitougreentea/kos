@@ -9,6 +9,7 @@ import Pos from "./pos"
 import GameUtil from "./game-util"
 import Game from "./game"
 import { GarbageMode } from "./game"
+import { KeyConfig } from "./key-config"
 
 const spinDataHigh = [
   [],
@@ -33,6 +34,8 @@ const spinDataLow = [
 ]
 
 export default class Player {
+  readonly keyConfig: KeyConfig
+
   public field: Field
   readonly width: number
   readonly height: number
@@ -79,7 +82,17 @@ export default class Player {
 
   public garbageMode: GarbageMode
 
+  public moveDirection = 0
+  public moveTimer = 0
+  public moveTimerMax = 5
+  public moveStack = 0
+  public moveStackIncrease = 1
+  public moveDownStack = 0
+  public moveDownStackIncrease = 1
+
   constructor(readonly game: Game, seed: number, config) {
+    this.keyConfig = config.keyConfig
+
     this.width = config.width
     this.height = config.height
     this.viewHeight = config.viewHeight
@@ -133,6 +146,47 @@ export default class Player {
     if(this.currentMino == null) return
     this.ghostY = this.minoY
     while(!GameUtil.hitTestMino(this.field, this.currentMino, this.minoX, this.ghostY - 1, this.minoR)) this.ghostY --
+  }
+
+  moveMinoJustPressed(dx: number) {
+    this.moveMino(dx)
+    this.moveDirection = dx
+    this.moveTimer = 0
+    this.moveStack = 0
+  }
+
+  moveMinoPressed(dx: number): boolean {
+    if(this.moveDirection == dx) {
+      console.log(dx)
+      console.log(this.moveTimer)
+      console.log(this.moveStack)
+      if(this.moveTimer < this.moveTimerMax) {
+        this.moveTimer ++
+        return false
+      } else {
+        this.moveStack += this.moveStackIncrease
+        const needsRefresh = this.moveStack >= 1
+        while(this.moveStack >= 1) {
+          this.moveStack -= 1
+          this.moveMino(this.moveDirection)
+        }
+        return needsRefresh
+      }
+    }
+  }
+
+  moveDownPressed(): boolean {
+    this.moveDownStack += this.moveDownStackIncrease
+    const needsRefresh = this.moveDownStack >= 1
+    while(this.moveDownStack >= 1) {
+      this.moveDownStack -= 1
+      this.moveDown()
+    }
+    return needsRefresh
+  }
+
+  moveDownReleased() {
+    this.moveDownStack = 0
   }
 
   moveMino(dx: number) {

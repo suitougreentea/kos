@@ -1,5 +1,6 @@
 import Player from "./player"
 import { minoName } from "./mino"
+import { KeyConfig, KeyState } from "./key-config"
 
 export enum GarbageMode {
   ALL,
@@ -49,6 +50,7 @@ export default class Game {
 
   getDefaultPlayerSetting() {
     return {
+      keyConfig: new KeyConfig("ArrowLeft", "ArrowRight", "ArrowDown", "ArrowUp", "Space", "KeyZ", "KeyX", "KeyS", "KeyC", "KeyQ", "KeyR", "Enter"),
       width: 10,
       height: 25,
       viewHeight: 20,
@@ -57,43 +59,94 @@ export default class Game {
     }
   }
 
-  leftKeyPressed() {
-    this.players[this.currentPlayer].moveMino(-1)
+  onKeyDown(e: KeyboardEvent) {
+    this.players[this.currentPlayer].keyConfig.onKeyDown(e)
   }
-  rightKeyPressed() {
-    this.players[this.currentPlayer].moveMino(1)
+
+  onKeyUp(e: KeyboardEvent) {
+    this.players[this.currentPlayer].keyConfig.onKeyUp(e)
   }
-  downKeyPressed() {
-    this.players[this.currentPlayer].moveDown()
-  }
-  quickKeyPressed() {
-    this.players[this.currentPlayer].moveDownQuick()
-  }
-  lockKeyPressed() {
-    this.players[this.currentPlayer].lockMino()
-  }
-  cwKeyPressed() {
-    this.players[this.currentPlayer].rotateMino(1)
-  }
-  ccwKeyPressed() {
-    this.players[this.currentPlayer].rotateMino(-1)
-  }
-  rotate180KeyPressed() {
-    this.players[this.currentPlayer].rotateMino(2)
-  }
-  holdKeyPressed() {
-    this.players[this.currentPlayer].holdMino()
-  }
-  resetKeyPressed() {
-    this.players[this.currentPlayer].resetMinoState()
-  }
-  revertKeyPressed() {
-    this.players[this.currentPlayer].revert()
-    this.players.forEach(player => player.revertGarbage())
-  }
-  commitKeyPressed() {
-    this.players[this.currentPlayer].commit()
-    this.players.forEach(player => player.saveGarbage())
+
+  update(): boolean {
+    let needsRefresh = false
+    const currentPlayer = this.players[this.currentPlayer]
+    currentPlayer.keyConfig.update()
+    const keyState = currentPlayer.keyConfig.frameState
+
+    if(keyState.get("left") == KeyState.JUST_PRESSED) {
+      currentPlayer.moveMinoJustPressed(-1)
+      needsRefresh = true
+    }
+
+    if(keyState.get("left") == KeyState.PRESSED) {
+      needsRefresh = needsRefresh || currentPlayer.moveMinoPressed(-1)
+    }
+
+    if(keyState.get("right") == KeyState.JUST_PRESSED) {
+      currentPlayer.moveMinoJustPressed(1)
+      needsRefresh = true
+    }
+
+    if(keyState.get("right") == KeyState.PRESSED) {
+      needsRefresh = needsRefresh || currentPlayer.moveMinoPressed(1)
+    }
+
+    if(keyState.get("down") == KeyState.JUST_PRESSED || keyState.get("down") == KeyState.PRESSED) {
+      needsRefresh = needsRefresh || currentPlayer.moveDownPressed()
+    }
+
+    if(keyState.get("down") == KeyState.JUST_RELEASED) {
+      currentPlayer.moveDownReleased()
+    }
+
+    if(keyState.get("lock") == KeyState.JUST_PRESSED) {
+      currentPlayer.lockMino()
+      needsRefresh = true
+    }
+
+    if(keyState.get("quick") == KeyState.JUST_PRESSED) {
+      currentPlayer.moveDownQuick()
+      needsRefresh = true
+    }
+
+    if(keyState.get("ccw") == KeyState.JUST_PRESSED) {
+      currentPlayer.rotateMino(-1)
+      needsRefresh = true
+    }
+
+    if(keyState.get("cw") == KeyState.JUST_PRESSED) {
+      currentPlayer.rotateMino(1)
+      needsRefresh = true
+    }
+
+    if(keyState.get("rotate180") == KeyState.JUST_PRESSED) {
+      currentPlayer.rotateMino(2)
+      needsRefresh = true
+    }
+
+    if(keyState.get("hold") == KeyState.JUST_PRESSED) {
+      currentPlayer.holdMino()
+      needsRefresh = true
+    }
+
+    if(keyState.get("reset") == KeyState.JUST_PRESSED) {
+      currentPlayer.resetMinoState()
+      needsRefresh = true
+    }
+
+    if(keyState.get("revert") == KeyState.JUST_PRESSED) {
+      currentPlayer.revert()
+      this.players.forEach(player => player.revertGarbage())
+      needsRefresh = true
+    }
+
+    if(keyState.get("commit") == KeyState.JUST_PRESSED) {
+      currentPlayer.commit()
+      this.players.forEach(player => player.saveGarbage())
+      needsRefresh = true
+    }
+
+    return needsRefresh
   }
 
   onLineErase(minoId: number, lines: number, spin: boolean, spinMini: boolean, backToBack: boolean, combo: number, allClear: boolean) {
@@ -127,6 +180,7 @@ export default class Game {
   }
 
   onTurnEnd() {
+    this.players[this.currentPlayer].keyConfig.reset()
     this.nextPlayer()
   }
 
