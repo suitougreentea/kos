@@ -157,9 +157,6 @@ export default class Player {
 
   moveMinoPressed(dx: number): boolean {
     if(this.moveDirection == dx) {
-      console.log(dx)
-      console.log(this.moveTimer)
-      console.log(this.moveStack)
       if(this.moveTimer < this.moveTimerMax) {
         this.moveTimer ++
         return false
