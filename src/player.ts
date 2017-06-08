@@ -118,6 +118,8 @@ export default class Player {
     if(this.currentMino == null) {
       this.newMino()
     }
+    this.lastNext = []
+    this.next.forEach(e => this.lastNext.push(e))
     this.lastStartMino = this.currentMino
     this.lastTarget = this.target
   }
