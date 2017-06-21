@@ -35,12 +35,13 @@ export default class Game {
   readonly players: Array<Player>
   readonly alivePlayers: Array<number> = []
   public currentPlayer = 0
+  public working = true
 
   constructor() {
     const player1Config = this.getDefaultPlayerSetting()
     const player1 = new Player(this, this.seed, player1Config)
     const player2Config = this.getDefaultPlayerSetting()
-    player2Config.keyConfig = new KeyConfig("ArrowLeft", "ArrowRight", "ArrowDown", "ArrowUp", "", "KeyA", "KeyD", "KeyS", "Space", "", "KeyR", "Enter")
+    //player2Config.keyConfig = new KeyConfig("ArrowLeft", "ArrowRight", "ArrowDown", "ArrowUp", "", "KeyA", "KeyD", "KeyS", "Space", "", "KeyR", "Enter")
     const player2 = new Player(this, this.seed + 1, player2Config)
 
     this.players = [player1, player2]
@@ -58,6 +59,7 @@ export default class Game {
       viewHeight: 25,
       turnMinoNumber: 7,
       garbageMode: GarbageMode.ALL,
+      timer: 30000,
     }
   }
 
@@ -70,10 +72,20 @@ export default class Game {
   }
 
   update(): boolean {
+    if(!this.working) return false
     let needsRefresh = false
     const currentPlayer = this.players[this.currentPlayer]
     currentPlayer.keyConfig.update()
     const keyState = currentPlayer.keyConfig.frameState
+
+    if(currentPlayer.timer > 0) {
+      const now = new Date().getTime()
+      currentPlayer.elapsedTime = now - currentPlayer.startTime
+      if(currentPlayer.elapsedTime > currentPlayer.timer) {
+        currentPlayer.elapsedTime = currentPlayer.timer
+        currentPlayer.timeUp()
+      }
+    }
 
     if(keyState.get("left") == KeyState.JUST_PRESSED) {
       currentPlayer.moveMinoJustPressed(-1)
@@ -148,7 +160,7 @@ export default class Game {
       needsRefresh = true
     }
 
-    return needsRefresh
+    return true
   }
 
   onLineErase(minoId: number, lines: number, spin: boolean, spinMini: boolean, backToBack: boolean, combo: number, allClear: boolean) {
@@ -192,7 +204,8 @@ export default class Game {
     this.alivePlayers.splice(this.alivePlayers.indexOf(this.currentPlayer), 1)
     if(this.alivePlayers.length == 1) {
       this.players[this.alivePlayers[0]].viewHeight = this.players[this.alivePlayers[0]].height
-      console.log("Player " + (this.alivePlayers[0] + 1) + ": Win")
+      console.log("Player" + (this.alivePlayers[0] + 1) + ": Win")
+      this.working = false
     }
     this.nextPlayer()
   }
@@ -219,7 +232,9 @@ export default class Game {
 
   startPlayer() {
     const current = this.players[this.currentPlayer]
+    console.log(this.currentPlayer)
     current.target = this.findNextPlayer(current.target == null ? this.currentPlayer : current.target, this.currentPlayer)
+    current.startTime = new Date().getTime()
     current.startTurn()
   }
 

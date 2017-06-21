@@ -91,6 +91,10 @@ export default class Player {
   public moveDownStack = 0
   public moveDownStackIncrease = 1
 
+  public timer = 0
+  public startTime = 0
+  public elapsedTime = 0
+
   constructor(readonly game: Game, seed: number, config) {
     this.keyConfig = config.keyConfig
 
@@ -101,6 +105,7 @@ export default class Player {
     this.lastField = new Field(this.width, this.height)
     this.turnMinoNumber = config.turnMinoNumber
     this.garbageMode = config.garbageMode
+    this.timer = config.timer
 
     this.randomizer = new MinoRandomizerBag(new Set([0, 1, 2, 3, 4, 5, 6]), seed)
     this.coloring = new MinoColoringStandard()
@@ -405,6 +410,15 @@ export default class Player {
     this.lastTarget = this.target
     if(this.turnMinoNumber == this.placedMinoNumber) {
       this.next.push(this.generator.newMino())
+      this.active = false
+      this.game.onTurnEnd()
+    }
+  }
+
+  timeUp() {
+    console.log("Time Up!")
+    this.commit()
+    if(this.turnMinoNumber != this.placedMinoNumber) {
       this.active = false
       this.game.onTurnEnd()
     }

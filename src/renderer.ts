@@ -106,7 +106,9 @@ export default class Renderer {
       combo: combo,
       backToBack: player.backToBackFlag,
       target: player.target == null ? "-" : player.target + 1,
-      mino: player.placedMinoNumber + "/" + player.turnMinoNumber
+      mino: player.placedMinoNumber + "/" + player.turnMinoNumber,
+      remainTime: (player.timer - player.elapsedTime) / 1000,
+      timer: player.timer / 1000
     }
   }
 
