@@ -77,6 +77,7 @@ export default class Player {
   public alive = true
   public active = false
   public target: number
+  public gameOver = false
 
   public lastTarget: number
 
@@ -125,19 +126,20 @@ export default class Player {
   }
 
   newMino() {
+    if(this.gameOver) return
     this.currentMino = this.next.shift()
     this.resetMinoState()
   }
 
   resetMinoState() {
+    if(this.gameOver) return
     if(this.currentMino == null) return
     this.minoR = 0
     const spawnPosition = this.getSpawnPosition(this.currentMino.minoId, this.minoR)
     this.minoX = spawnPosition.x
     this.minoY = spawnPosition.y
     if(GameUtil.hitTestMino(this.field, this.currentMino, this.minoX, this.minoY, this.minoR)) {
-      this.viewHeight = this.height
-      this.game.onGameOver()
+      this.gameOver = true
     }
     this.lastRotated = false
     this.lastKicked = false
@@ -189,6 +191,7 @@ export default class Player {
   }
 
   moveMino(dx: number) {
+    if(this.gameOver) return
     if(this.currentMino == null) return
     if(!GameUtil.hitTestMino(this.field, this.currentMino, this.minoX + dx, this.minoY, this.minoR)) {
       this.minoX += dx
@@ -200,6 +203,7 @@ export default class Player {
   }
 
   moveDown() {
+    if(this.gameOver) return
     if(this.currentMino == null) return
     if(!GameUtil.hitTestMino(this.field, this.currentMino, this.minoX, this.minoY - 1, this.minoR)) {
       this.minoY --
@@ -210,12 +214,14 @@ export default class Player {
   }
 
   moveDownQuick() {
+    if(this.gameOver) return
     if(this.currentMino == null) return
     if(this.minoY != this.ghostY) this.lastRotated = false
     this.minoY = this.ghostY
   }
 
   rotateMino(dr: number): boolean {
+    if(this.gameOver) return
     if(this.currentMino == null) return
     const mino = this.currentMino
     if(mino == null) return false
@@ -234,6 +240,7 @@ export default class Player {
   }
 
   lockMino() {
+    if(this.gameOver) return
     if(this.currentMino == null) return
     // Lock
     if(this.minoY != this.ghostY) this.lastRotated = false
@@ -356,6 +363,7 @@ export default class Player {
   }
 
   holdMino() {
+    if(this.gameOver) return
     if(this.currentMino == null) return
     if(this.hold == null) {
       this.hold = this.currentMino
@@ -369,6 +377,11 @@ export default class Player {
   }
 
   commit() {
+    if(this.gameOver) {
+      this.viewHeight = this.height
+      this.game.onGameOver()
+      return
+    }
     if(this.invisibleGarbage.length > 0) {
       let iy = this.invisibleGarbage.reduce((a, b) => a + b, 0) - 1
       this.invisibleGarbage.forEach(lines => {
@@ -407,6 +420,7 @@ export default class Player {
     this.backToBackFlag = this.lastBackToBackFlag
     this.invisibleGarbage = []
     this.target = this.lastTarget
+    this.gameOver = false
     this.commit()
     this.resetMinoState()
   }

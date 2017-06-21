@@ -97,6 +97,7 @@ export default class Renderer {
     return {
       number: i + 1,
       alive: player.alive,
+      gameOver: player.gameOver,
       active: player.active,
       field: field,
       next: next,

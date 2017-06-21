@@ -32,16 +32,18 @@ const spinMiniAttack = {
 
 export default class Game {
   readonly seed = Math.floor(Math.random() * 1000000000)
-  readonly players = [
-    new Player(this, this.seed, this.getDefaultPlayerSetting()),
-    new Player(this, this.seed, this.getDefaultPlayerSetting()),
-    //new Player(this, this.seed),
-    //new Player(this, this.seed),
-  ]
+  readonly players: Array<Player>
   readonly alivePlayers: Array<number> = []
   public currentPlayer = 0
 
   constructor() {
+    const player1Config = this.getDefaultPlayerSetting()
+    const player1 = new Player(this, this.seed, player1Config)
+    const player2Config = this.getDefaultPlayerSetting()
+    player2Config.keyConfig = new KeyConfig("ArrowLeft", "ArrowRight", "ArrowDown", "ArrowUp", "", "KeyA", "KeyD", "KeyS", "Space", "", "KeyR", "Enter")
+    const player2 = new Player(this, this.seed + 1, player2Config)
+
+    this.players = [player1, player2]
     this.players.forEach((player, i) => {
       this.alivePlayers.push(i)
     })
@@ -53,7 +55,7 @@ export default class Game {
       keyConfig: new KeyConfig("ArrowLeft", "ArrowRight", "ArrowDown", "ArrowUp", "Space", "KeyZ", "KeyX", "KeyS", "KeyC", "KeyQ", "KeyR", "Enter"),
       width: 10,
       height: 25,
-      viewHeight: 20,
+      viewHeight: 25,
       turnMinoNumber: 7,
       garbageMode: GarbageMode.ALL,
     }
