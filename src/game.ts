@@ -84,6 +84,7 @@ export default class Game {
       if(currentPlayer.elapsedTime > currentPlayer.timer) {
         currentPlayer.elapsedTime = currentPlayer.timer
         currentPlayer.timeUp()
+        return true
       }
     }
 
@@ -227,6 +228,7 @@ export default class Game {
 
   nextPlayer() {
     this.currentPlayer = this.findNextPlayer(this.currentPlayer, -1)
+    this.players.forEach(player => player.saveGarbage())
     this.startPlayer()
   }
 
