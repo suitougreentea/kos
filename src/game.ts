@@ -217,7 +217,7 @@ export default class Game {
     else result += attack[lines]
     if(backToBack) result ++
     if(combo) result += this.calculateComboAttack(combo)
-    if(allClear) result += 6
+    if(allClear) result = 10
     return result
   }
 
