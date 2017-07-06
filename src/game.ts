@@ -234,7 +234,6 @@ export default class Game {
 
   startPlayer() {
     const current = this.players[this.currentPlayer]
-    console.log(this.currentPlayer)
     current.target = this.findNextPlayer(current.target == null ? this.currentPlayer : current.target, this.currentPlayer)
     current.startTime = new Date().getTime()
     current.startTurn()
