@@ -94,11 +94,25 @@ export default class Renderer {
     const garbage = "[" + player.garbage.reduce((a, b) => a + b, 0) + "] " + player.garbage.join(", ")
     const combo = Math.max(player.combo, 0)
 
+    let timerString: string
+    let timerRatio: number
+    if(player.readyTimer) {
+      const remainTime = player.readyTimerMax - player.elapsedTime
+      timerString = `${player.timerMax / 1000} / ${player.timerMax / 1000}`
+      timerRatio = remainTime / player.readyTimerMax
+    } else {
+      const remainTime = player.timerMax - player.elapsedTime
+      timerString = `${remainTime / 1000} / ${player.timerMax / 1000}`
+      timerRatio = remainTime / player.timerMax
+    }
+
     return {
       number: i + 1,
       alive: player.alive,
       gameOver: player.gameOver,
       active: player.active,
+      width: player.width,
+      height: player.viewHeight,
       field: field,
       next: next,
       hold: hold,
@@ -107,8 +121,9 @@ export default class Renderer {
       backToBack: player.backToBackFlag,
       target: player.target == null ? "-" : player.target + 1,
       mino: player.placedMinoNumber + "/" + player.turnMinoNumber,
-      remainTime: (player.timer - player.elapsedTime) / 1000,
-      timer: player.timer / 1000
+      timerString: timerString,
+      timerRatio: timerRatio,
+      readyTimer: player.readyTimer
     }
   }
 

@@ -56,10 +56,11 @@ export default class Game {
       keyConfig: new KeyConfig("ArrowLeft", "ArrowRight", "ArrowDown", "ArrowUp", "Space", "KeyZ", "KeyX", "KeyS", "KeyC", "KeyQ", "KeyR", "Enter"),
       width: 10,
       height: 25,
-      viewHeight: 25,
+      viewHeight: 20,
       turnMinoNumber: 7,
       garbageMode: GarbageMode.ALL,
       timer: 30000,
+      readyTimer: 3000,
     }
   }
 
@@ -78,13 +79,22 @@ export default class Game {
     currentPlayer.keyConfig.update()
     const keyState = currentPlayer.keyConfig.frameState
 
-    if(currentPlayer.timer > 0) {
+    if(currentPlayer.timerMax > 0) {
       const now = new Date().getTime()
       currentPlayer.elapsedTime = now - currentPlayer.startTime
-      if(currentPlayer.elapsedTime > currentPlayer.timer) {
-        currentPlayer.elapsedTime = currentPlayer.timer
-        currentPlayer.timeUp()
-        return true
+      if(currentPlayer.readyTimer) {
+        if(currentPlayer.elapsedTime > currentPlayer.readyTimerMax) {
+          currentPlayer.readyTimer = false
+          currentPlayer.startTime = now
+        } else {
+          return true
+        }
+      } else {
+        if(currentPlayer.elapsedTime > currentPlayer.timerMax) {
+          currentPlayer.elapsedTime = currentPlayer.timerMax
+          currentPlayer.timeUp()
+          return true
+        }
       }
     }
 
@@ -236,6 +246,7 @@ export default class Game {
     const current = this.players[this.currentPlayer]
     current.target = this.findNextPlayer(current.target == null ? this.currentPlayer : current.target, this.currentPlayer)
     current.startTime = new Date().getTime()
+    current.readyTimer = true
     current.startTurn()
   }
 

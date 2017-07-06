@@ -1,18 +1,18 @@
 <div class="container">
   <div id="players">
-    <div class="player" v-for="player in data.players">
+    <div class="player" v-for="player in data.players" v-bind:class="{'player-gameover': player.gameOver, 'player-dead': !player.alive, 'player-active': player.active}">
+      <div class="playernumber">Player {{player.number}}</div>
       <div class="field-container">
         <div class="field">
           <div class="field-row" v-for="row in player.field">
             <div class="field-block" v-bind:class="['block-' + block.blockClass]" v-for="block in row"></div>
           </div>
         </div>
-        <div class="info">
-          <div>Player {{player.number}}</div>
-          <div>Time: {{player.remainTime}} / {{player.timer}}</div>
-          <div>Alive: {{player.alive}}</div>
-          <div>GameOver: {{player.gameOver}}</div>
-          <div>Active: {{player.active}}</div>
+        <div class="info" v-bind:style="{ width: (player.width * 22 + 6) + 'px'}">
+          <div class="timer" v-if="player.timer != 0" v-bind:class="{'timer-ready': player.readyTimer}">
+            <div class="timer-elapsed" v-bind:style="{ width: player.timerRatio * 100 + '%'}"></div>
+            <div class="timer-text">{{ player.timerString }}</div>
+          </div>
           <div>Mino: {{player.mino}}</div>
           <div>Combo: {{player.combo}}</div>
           <div>BTB: {{player.backToBack}}</div>

@@ -91,9 +91,11 @@ export default class Player {
   public moveDownStack = 0
   public moveDownStackIncrease = 1
 
-  public timer = 0
+  public timerMax = 0
   public startTime = 0
   public elapsedTime = 0
+  public readyTimer = false
+  public readyTimerMax = 0
 
   constructor(readonly game: Game, seed: number, config) {
     this.keyConfig = config.keyConfig
@@ -105,7 +107,8 @@ export default class Player {
     this.lastField = new Field(this.width, this.height)
     this.turnMinoNumber = config.turnMinoNumber
     this.garbageMode = config.garbageMode
-    this.timer = config.timer
+    this.timerMax = config.timer
+    this.readyTimerMax = config.readyTimer
 
     this.randomizer = new MinoRandomizerBag(new Set([0, 1, 2, 3, 4, 5, 6]), seed)
     this.coloring = new MinoColoringStandard()

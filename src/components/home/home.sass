@@ -1,13 +1,58 @@
+$player-color: #CCC
+$player-border-color: #DDD
+$player-active-color: #F0F0F0
+$player-active-border-color: #F8F8F8
+$player-dead-color: #888
+$player-dead-border-color: #999
+$player-gameover-color: #A44
+$player-gameover-border-color: #B55
+
+body
+  background-color: #FAFAFA
+
 .content h1
   text-align: center
 
 .player
   float: left
-  margin: 10px
+  margin: 5px
+  padding: 10px
+  background-color: $player-color
+  border: 5px outset $player-border-color
+
+.playernumber
+  margin-bottom: 8px
+  text-align: center
+  font-weight: bold
 
 .field-container
   float: left
   margin-right: 5px
+
+.field
+  border: 3px inset #DDD
+
+
+.player-active
+  background-color: $player-active-color
+  border-color: $player-active-border-color
+
+  .field, .hold, .next
+    border-color: $player-active-border-color
+
+.player-gameover
+  background-color: $player-gameover-color
+  border-color: $player-gameover-border-color
+
+  .field, .hold, .next
+    border-color: $player-gameover-border-color
+
+.player-dead
+  background-color: $player-dead-color
+  border-color: $player-dead-border-color
+
+  .field, .hold, .next
+    border-color: $player-dead-border-color
 
 .next-container
   float: left
@@ -19,6 +64,9 @@
 
 .hold
   margin-bottom: 5px
+
+.hold,.next
+  border: 3px inset #DDD
 
 .field-row
   display: block
@@ -58,3 +106,23 @@
     background-color: lighten($color, 20%)
   .block-#{$name}-ghost
     background-color: darken($color, 20%)
+
+.timer
+  height: 20px
+  margin-top: 10px
+  margin-bottom: 5px
+  background-color: #222
+  .timer-elapsed
+    height: 20px
+    background-color: #888
+  .timer-text
+    color: #FFF
+    text-align: right
+    margin-top: -20px
+    padding-right: 5px
+    line-height: 20px
+
+.timer-ready
+  background-color: #822
+  .timer-elapsed
+    background-color: #F88
